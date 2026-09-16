@@ -1,0 +1,22 @@
+browsingContext.GetTreeParametersExtension = (
+  ? "moz:scope": bool
+)
+
+browsingContext.InfoExtension = (
+  ? "moz:name": text,
+  ? "moz:scope": "chrome" / "content",
+)
+
+session.CapabilityRequestExtension = (
+  ? "moz:buildID": text,
+  ? "moz:headless": bool,
+  ? "moz:platformVersion": text,
+  ? "moz:processID": js-uint,
+  ? "moz:profile": text,
+  ? "moz:shutdownTimeout": js-uint,
+)
+
+webExtension.InstallParametersExtension = (
+  ? "moz:allowPrivateBrowsing": bool .default false,
+  ? "moz:permanent": bool .default false,
+)

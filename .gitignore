@@ -1,0 +1,4 @@
+.devcontainer
+.claude
+node_modules
+dist
