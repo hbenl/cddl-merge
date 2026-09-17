@@ -2,11 +2,15 @@
 
 Merges a main CDDL file with an extension CDDL file.
 
-The extension file may only define groups whose name is the name of a rule in
-the main file followed by `Extension`. Each of those group names is added as an
-entry to the corresponding rule in the main file, so that the merged CDDL is the
-main file extended by the extension groups, followed by the unmodified extension
-file.
+A rule in the extension file whose name ends with `Extension` must be a group
+whose name is the name of a rule in the main file followed by `Extension`. Each
+of those group names is added as an entry to the corresponding rule in the main
+file, so that the merged CDDL is the main file extended by the extension groups,
+followed by the unmodified extension file.
+
+The extension file may also define other rules, whose name does not end with
+`Extension`. Those are carried over unchanged, which is useful for helper types
+that the extension groups refer to.
 
 Given a main file
 
@@ -67,8 +71,8 @@ const merged = merge(mainSource, extensionSource); // throws MergeError
 
 A rule of the main file can only be extended if it defines a map (`{ ... }`) or
 a group (`( ... )`) with a single group choice. Type choices, arrays and choices
-between several groups are reported as errors rather than extended, as is an
-extension group without a matching rule in the main file.
+between several groups are reported as errors rather than extended, as is a rule
+whose name ends with `Extension` but that has no matching rule in the main file.
 
 ## Tests
 

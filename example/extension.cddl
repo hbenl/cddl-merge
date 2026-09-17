@@ -8,13 +8,23 @@ browsingContext.InfoExtension = (
 )
 
 session.CapabilityRequestExtension = (
-  ? "moz:buildID": text,
-  ? "moz:headless": bool,
-  ? "moz:platformVersion": text,
-  ? "moz:processID": js-uint,
-  ? "moz:profile": text,
-  ? "moz:shutdownTimeout": js-uint,
+  ? "moz:firefoxOptions": session.CapabilityRequestFirefoxOptions,
 )
+
+session.CapabilityRequestFirefoxOptions = {
+  ? "binary": text,
+  ? "args": [*text],
+  ? "profile": text,
+  ? "log": {
+    ? "level": ("trace" / "debug" / "config" / "info" / "warn" / "error" / "fatal") .default "info"
+  },
+  ? "prefs": {*text => text / bool / js-int},
+  ? "env": {*text => text},
+  ? "androidPackage": text,
+  ? "androidActivity": text,
+  ? "androidDeviceSerial": text,
+  ? "androidIntentArguments": [*text],
+}
 
 webExtension.InstallParametersExtension = (
   ? "moz:allowPrivateBrowsing": bool .default false,

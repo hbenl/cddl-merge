@@ -70,13 +70,18 @@ test("appends the extension file unmodified", () => {
   assert.ok(merged.endsWith(`\n\n${extension}`), merged);
 });
 
-test("rejects an extension rule without the Extension suffix", () => {
-  assert.deepEqual(problems("Foo = {a: int}", "Bar = (b: int)"), [
-    'extension file defines "Bar", but it may only define groups whose name ends with "Extension"',
-  ]);
+test("ignores a rule without the Extension suffix", () => {
+  const extension = "FooExtension = (b: Helper)\n\nHelper = {c: int}\n";
+  assert.equal(mergeMain("Foo = {\n  a: int,\n}\n", extension), "Foo = {\n  a: int,\n  FooExtension\n}");
 });
 
-test("rejects an extension rule that is not a group", () => {
+test("ignores a rule without the Extension suffix that the main file also defines", () => {
+  // Not our business: the rule is neither an extension nor touched by us.
+  const merged = merge("Foo = {a: int}\nBar = {b: int}\n", "Bar = {c: int}\n");
+  assert.ok(merged.endsWith("Bar = {c: int}\n"), merged);
+});
+
+test("still rejects an Extension rule that is not a group", () => {
   assert.deepEqual(problems("Foo = {a: int}", "FooExtension = {b: int}"), [
     '"FooExtension" in extension file must be a group, i.e. its definition must be wrapped in parentheses',
   ]);
@@ -118,7 +123,7 @@ test("rejects rules that cannot hold a group", () => {
 });
 
 test("reports all problems at once", () => {
-  assert.equal(problems("Foo = {a: int}", "Bar = (b: int)\nBazExtension = (c: int)").length, 2);
+  assert.equal(problems("Foo = {a: int}", "BarExtension = {b: int}\nBazExtension = (c: int)").length, 2);
 });
 
 test("reports a parse error", () => {
@@ -126,11 +131,11 @@ test("reports a parse error", () => {
 });
 
 test("uses the given file names in messages", () => {
-  const [problem] = problems("Foo = {a: int}", "Bar = (b: int)", {
+  const [problem] = problems("Foo = {a: int}", "BarExtension = (b: int)", {
     mainName: "m.cddl",
     extensionName: "e.cddl",
   });
-  assert.match(problem, /^e\.cddl defines "Bar"/);
+  assert.match(problem, /has no corresponding group or type "Bar" in m\.cddl$/);
 });
 
 test("merges the example files into parsable CDDL", () => {

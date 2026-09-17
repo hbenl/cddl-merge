@@ -40,10 +40,10 @@ export interface MergeOptions {
 /**
  * Merge a main CDDL file with an extension CDDL file.
  *
- * Every rule in the extension file must be a group whose name is the name of a
- * rule in the main file followed by "Extension". Each such group name is added
- * as an entry to the corresponding rule in the main file, so that the merged
- * CDDL is the main file extended by the extension groups.
+ * A rule in the extension file whose name ends with "Extension" must be a group
+ * named after a rule in the main file, and its name is added as an entry to that
+ * rule, so that the merged CDDL is the main file extended by the extension
+ * groups. Any other rule of the extension file is left alone.
  *
  * @returns the merged CDDL: the modified main file followed by the unmodified
  *   extension file
@@ -67,11 +67,9 @@ export function merge(mainSource: string, extensionSource: string, options: Merg
   for (const extensionRule of extensionTree.rules) {
     const extensionRuleName = extensionRule.name.name;
 
+    // Rules that are not extensions are carried over unchanged, they are
+    // typically helpers that the extension groups refer to.
     if (!extensionRuleName.endsWith(EXTENSION_SUFFIX)) {
-      problems.push(
-        `${extensionName} defines "${extensionRuleName}", but it may only define ` +
-          `groups whose name ends with "${EXTENSION_SUFFIX}"`,
-      );
       continue;
     }
 

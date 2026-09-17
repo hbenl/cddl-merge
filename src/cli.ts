@@ -5,10 +5,10 @@ import { MergeError, merge } from "./merge.js";
 
 const usage = `Usage: cddl-merge <main.cddl> <extension.cddl> [-o <output.cddl>]
 
-Merges a main CDDL file with an extension CDDL file. Every rule in the
-extension file must be a group named after a rule in the main file plus
-"Extension"; each of those group names is added to the corresponding rule in
-the main file.
+Merges a main CDDL file with an extension CDDL file. A rule in the extension
+file whose name ends with "Extension" must be a group named after a rule in the
+main file, and its name is added to that rule. Any other rule of the extension
+file is carried over unchanged.
 
 Writes the merged CDDL to <output.cddl>, or to stdout if -o is not given.`;
 
